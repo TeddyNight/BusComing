@@ -1,0 +1,72 @@
+package com.github.teddynight.buscoming
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.github.teddynight.buscoming.ui.theme.BusComingTheme
+
+@Composable
+fun timeInCart(time: Int){
+    Row(verticalAlignment = Alignment.Bottom,
+        modifier = Modifier.padding(4.dp)) {
+        Text(
+            time.toString(),
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(text = "分",
+            fontSize = 16.sp,
+            color = Color.Gray);
+    }
+}
+
+@Composable
+fun busCart() {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .height(IntrinsicSize.Min)
+        .clickable { }) {
+        Column() {
+            bigCartText("111")
+            smallCartText("Next: ......")
+        }
+        Row(horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth()) {
+            timeInCart(9);
+            Divider(color = Color.Gray,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxHeight()
+                        .width(1.dp))
+            Box(modifier = Modifier
+                .size(36.dp)
+                .padding(4.dp)
+                .align(Alignment.CenterVertically)
+                .clickable { }) {
+                val stationIcon = painterResource(R.drawable.exchange)
+                Image(stationIcon,"切换方向",
+                    contentScale = ContentScale.Inside,
+                    alignment = Alignment.Center)
+            }
+        }
+    }
+}
