@@ -20,14 +20,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.teddynight.buscoming.ui.nearbyScreen
 import com.github.teddynight.buscoming.ui.theme.BusComingTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
-                stationList()
+            Scaffold(topBar = {
+                TopAppBar(
+                    title = { Text("BusComing") },
+                )
+            }) {
+                nearbyScreen()
             }
         }
     }

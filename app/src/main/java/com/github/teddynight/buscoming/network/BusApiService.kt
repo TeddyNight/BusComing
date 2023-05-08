@@ -6,6 +6,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 private const val BASE_URL =
     "https://file.202016.xyz/"
@@ -19,7 +20,7 @@ private val retrofit = Retrofit.Builder()
 
 interface BusApiService {
     @GET("busapi/nearby.php?lng=113.03&lat=23.15")
-    suspend fun getNearby(): Nearby
+    suspend fun getNearby(@Query("lng") lng: Float, @Query("lat") lat: Float): Nearby
 }
 
 object BusApi {
