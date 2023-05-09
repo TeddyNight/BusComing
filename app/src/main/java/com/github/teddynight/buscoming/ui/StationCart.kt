@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.teddynight.buscoming.model.Station
 import com.github.teddynight.buscoming.ui.theme.BusComingTheme
 
 @Composable
@@ -43,12 +44,15 @@ fun topStationCart(station: String) {
 }
 
 @Composable
-fun stationCart(station: String) {
+fun stationCart(station: Station) {
     Column(modifier = Modifier
         .padding(4.dp)
         .height(IntrinsicSize.Min)) {
-        topStationCart(station)
-        busCart()
-        busCart()
+        topStationCart(station.name)
+        Column() {
+            station.buses.forEach() {
+                busCart(busPair = it)
+            }
+        }
     }
 }

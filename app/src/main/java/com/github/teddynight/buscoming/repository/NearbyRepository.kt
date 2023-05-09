@@ -1,19 +1,19 @@
 package com.github.teddynight.buscoming.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
+import com.github.teddynight.buscoming.model.Bus
 import com.github.teddynight.buscoming.model.Nearby
 import com.github.teddynight.buscoming.model.Station
 import com.github.teddynight.buscoming.network.BusApi
+import com.github.teddynight.buscoming.network.BusApiStatus
 
 class NearbyRepository {
     val pos = MutableLiveData(Pair(113.03f,23.15f))
-    private val _stations = MutableLiveData(emptyList<Station>())
-    val stations: LiveData<List<Station>> = _stations
+    val status = MutableLiveData(BusApiStatus.LOADING)
+    val nearby = MutableLiveData(Nearby(emptyList(), emptyMap()))
 
-    suspend fun refresh() {
-        val nearby = BusApi.retrofitService.getNearby(pos.value!!.first,pos.value!!.second)
-        _stations.value = nearby.stations
+    suspend fun refreshAll() {
+        nearby.value = BusApi.retrofitService.getNearby(pos.value!!.first,pos.value!!.second)
     }
     
     companion object {

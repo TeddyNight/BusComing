@@ -6,5 +6,5 @@ data class Station(
     @Json(name="sId")
     val id: String,
     val name: String,
-    val buses: List<Bus>
+    val buses: List<List<Bus>>
 )
