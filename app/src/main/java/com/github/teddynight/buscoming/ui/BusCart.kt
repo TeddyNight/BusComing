@@ -23,18 +23,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import com.github.teddynight.buscoming.model.Bus
 import com.github.teddynight.buscoming.ui.theme.BusComingTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.teddynight.buscoming.ui.NearbyScreenViewModel
 
 @Composable
-fun timeInCart(bId: String, viewModel: NearbyScreenViewModel = viewModel()){
-    val state = viewModel.arrivals.observeAsState()
+fun timeInCart(arrivals: List<Long>){
+    var waitingTime = "--"
+    if (!arrivals.isEmpty()) {
+        val time = arrivals.sorted()[0]
+        val curTime = System.currentTimeMillis()
+        if (time > curTime) waitingTime  = ((time - curTime) / (60 * 1000)).toString()
+    }
     Row(verticalAlignment = Alignment.Bottom,
         modifier = Modifier.padding(4.dp)) {
         Text(
-            "9",
+            text = waitingTime,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
@@ -60,7 +67,7 @@ fun busCart(busPair: List<Bus>) {
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxWidth()) {
-            timeInCart(bus.id);
+            timeInCart(bus.arrivals);
             Divider(color = Color.Gray,
                     modifier = Modifier
                         .padding(4.dp)

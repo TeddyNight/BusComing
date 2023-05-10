@@ -31,6 +31,13 @@ fun smallCartText(content: String) {
 }
 
 @Composable
+fun mediumCartText(content: String) {
+    Text(text = content,
+        fontSize = 18.sp,
+        modifier = Modifier.padding(4.dp));
+}
+
+@Composable
 fun bigCartText(content: String) {
     Text(text = content,
         fontSize = 22.sp,

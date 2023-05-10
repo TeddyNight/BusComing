@@ -11,5 +11,6 @@ data class Bus(
     val price: String,
     // TODO: use date if needed
     val firstTime: String,
-    val lastTime: String
+    val lastTime: String,
+    val arrivals: List<Long>
 )

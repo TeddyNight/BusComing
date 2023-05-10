@@ -27,11 +27,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Scaffold(topBar = {
-                TopAppBar(
-                    title = { Text("BusComing") },
-                )
-            }) {
+            MaterialTheme {
                 nearbyScreen()
             }
         }

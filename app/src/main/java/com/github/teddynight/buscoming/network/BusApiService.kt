@@ -1,6 +1,7 @@
 package com.github.teddynight.buscoming.network
 
-import com.github.teddynight.buscoming.model.Nearby
+import com.github.teddynight.buscoming.model.Bus
+import com.github.teddynight.buscoming.model.Station
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -19,8 +20,10 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 interface BusApiService {
-    @GET("busapi/nearby.php?lng=113.03&lat=23.15")
-    suspend fun getNearby(@Query("lng") lng: Float, @Query("lat") lat: Float): Nearby
+    @GET("busapi/nearby.php")
+    suspend fun getNearby(@Query("lng") lng: Float, @Query("lat") lat: Float): List<Station>
+    @GET("busapi/stndetail.php")
+    suspend fun getStnDetail(@Query("sid") sId: String): List<List<Bus>>
 }
 
 object BusApi {
