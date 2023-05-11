@@ -9,6 +9,7 @@ import com.github.teddynight.buscoming.model.Station
 import com.github.teddynight.buscoming.network.BusApi
 import com.github.teddynight.buscoming.network.BusApiStatus
 import com.github.teddynight.buscoming.utlis.Location
+import com.github.teddynight.buscoming.utlis.SensorManagerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -27,10 +28,17 @@ class NearbyScreenViewModel @Inject constructor(
     private val _stnStatus = MutableLiveData(false)
     val stnStatus:LiveData<Boolean> = _stnStatus
     val buses = MutableLiveData(emptyList<List<Bus>>())
+    val sensorHelper = SensorManagerHelper(context);
 
-//    init {
+    init {
 //        refresh()
-//    }
+        sensorHelper.setOnShakeListener(object : SensorManagerHelper.OnShakeListener {
+            override fun onShake() {
+                Log.d("Sensor","Shake")
+                refresh()
+            }
+        })
+    }
 
     fun getLocation() {
         val location = Location(context).getLocation()
