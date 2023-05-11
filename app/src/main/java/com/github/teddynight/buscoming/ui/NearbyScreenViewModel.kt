@@ -1,15 +1,24 @@
 package com.github.teddynight.buscoming.ui
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import com.github.teddynight.buscoming.model.Bus
 import com.github.teddynight.buscoming.model.Station
 import com.github.teddynight.buscoming.network.BusApi
 import com.github.teddynight.buscoming.network.BusApiStatus
+import com.github.teddynight.buscoming.utlis.Location
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NearbyScreenViewModel: ViewModel() {
-    val pos = MutableLiveData(Pair(113.03f,23.15f))
+@HiltViewModel
+class NearbyScreenViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : ViewModel() {
+    val pos = MutableLiveData(Pair(0.0,0.0))
     private var _status = MutableLiveData(BusApiStatus.LOADING)
     val status: LiveData<BusApiStatus> = _status
     val stations: MutableLiveData<List<Station>> = MutableLiveData(emptyList())
@@ -19,8 +28,13 @@ class NearbyScreenViewModel: ViewModel() {
     val stnStatus:LiveData<Boolean> = _stnStatus
     val buses = MutableLiveData(emptyList<List<Bus>>())
 
-    init {
-        refresh()
+//    init {
+//        refresh()
+//    }
+
+    fun getLocation() {
+        val location = Location(context).getLocation()
+        pos.value = Pair(location.longitude,location.latitude)
     }
 
     suspend fun getStn() {

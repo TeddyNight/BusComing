@@ -21,7 +21,7 @@ private val retrofit = Retrofit.Builder()
 
 interface BusApiService {
     @GET("busapi/nearby.php")
-    suspend fun getNearby(@Query("lng") lng: Float, @Query("lat") lat: Float): List<Station>
+    suspend fun getNearby(@Query("lng") lng: Double, @Query("lat") lat:Double): List<Station>
     @GET("busapi/stndetail.php")
     suspend fun getStnDetail(@Query("sid") sId: String): List<List<Bus>>
 }
