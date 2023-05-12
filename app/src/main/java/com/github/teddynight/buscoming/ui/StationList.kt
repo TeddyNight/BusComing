@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.teddynight.buscoming.ui.NearbyScreenViewModel
+import com.github.teddynight.buscoming.ui.theme.putCenter
 
 @Composable
 fun stationList(viewModel: NearbyScreenViewModel = viewModel()) {
@@ -26,6 +27,11 @@ fun stationList(viewModel: NearbyScreenViewModel = viewModel()) {
             items(stations) {
                 stationCart(station = it)
             }
+        }
+    }
+    else {
+        putCenter() {
+            CircularProgressIndicator()
         }
     }
 }

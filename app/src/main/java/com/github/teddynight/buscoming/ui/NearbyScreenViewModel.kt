@@ -2,9 +2,13 @@ package com.github.teddynight.buscoming.ui
 
 import android.app.Application
 import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.lifecycle.*
 import com.github.teddynight.buscoming.model.Bus
 import com.github.teddynight.buscoming.model.Station
@@ -12,6 +16,7 @@ import com.github.teddynight.buscoming.network.BusApi
 import com.github.teddynight.buscoming.network.BusApiStatus
 import com.github.teddynight.buscoming.repository.StnDetailRepository
 import com.github.teddynight.buscoming.utlis.Location
+import com.github.teddynight.buscoming.utlis.ReceiverLiveData
 import com.github.teddynight.buscoming.utlis.SensorManagerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,17 +32,15 @@ class NearbyScreenViewModel @Inject constructor(
     private val handler = Handler()
     val stnRepository = StnDetailRepository
     val pos = MutableLiveData(Pair(0.0,0.0))
-    private var _status = MutableLiveData(BusApiStatus.LOADING)
-    val status: LiveData<BusApiStatus> = _status
-    val stations: MutableLiveData<List<Station>> = MutableLiveData(emptyList())
-//    private val _sid = MutableLiveData("")
-//    private val _stnStatus = MutableLiveData(false)
-//    val stnStatus:LiveData<Boolean> = _stnStatus
-//    val buses = MutableLiveData(emptyList<List<Bus>>())
+    val stations: MutableLiveData<List<Station>?> = MutableLiveData(null)
     val sid = stnRepository.sid
     val buses = stnRepository.buses
     private val sensorHelper = SensorManagerHelper(context)
     private var job = Job()
+    val activeNetworkInfoLiveData = ReceiverLiveData(context, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)) { context, intent ->
+        val manager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        manager.activeNetwork
+    }
 
     init {
 //        refresh()
@@ -58,24 +61,30 @@ class NearbyScreenViewModel @Inject constructor(
 //        buses.value = BusApi.retrofitService.getStnDetail(_sid.value!!)
 //    }
     fun getStn(sid: String) {
-        job.cancelChildren()
-        viewModelScope.launch(job) {
-            try {
-                stnRepository.get(sid)
-            } catch (e: Throwable) {
-                Toast.makeText(context,"加载失败", Toast.LENGTH_SHORT).show()
+        if (activeNetworkInfoLiveData.value == null) {
+            Toast.makeText(context,"网络不可用", Toast.LENGTH_SHORT).show()
+        } else {
+            job.cancelChildren()
+            viewModelScope.launch(job) {
+                try {
+                    stnRepository.get(sid)
+                    handler.postDelayed(Runnable {
+                        refreshStn() },15000)
+                } catch (e: Throwable) {
+                    errorToast()
+                }
             }
-            handler.postDelayed(Runnable {
-                refreshStn() },15000)
         }
     }
 
     fun refreshStn() {
-        viewModelScope.launch(job) {
-            try {
-                stnRepository.refresh()
-            } catch (e: Throwable) {
-                Log.e("NearbyScreenViewModel","Update stnDetail failed")
+        if (activeNetworkInfoLiveData.value != null) {
+            viewModelScope.launch(job) {
+                try {
+                    stnRepository.refresh()
+                } catch (e: Throwable) {
+                    errorToast()
+                }
             }
         }
         handler.postDelayed(Runnable {
@@ -99,16 +108,19 @@ class NearbyScreenViewModel @Inject constructor(
         job.cancelChildren()
         viewModelScope.launch(job) {
             try {
-                _status.value = BusApiStatus.LOADING
+                stations.value = null
                 stations.value = BusApi.retrofitService.getNearby(
                     pos.value!!.first,
-                    pos.value!!.second)
+                    pos.value!!.second
+                )
                 stnRepository.refresh()
-                _status.value = BusApiStatus.DONE
             } catch (e: Throwable) {
-                _status.value = BusApiStatus.ERROR
-                Log.e("NearbyScreen",e.message!!)
+                errorToast()
             }
         }
+    }
+
+    fun errorToast() {
+        Toast.makeText(context,"加载失败", Toast.LENGTH_SHORT).show()
     }
 }

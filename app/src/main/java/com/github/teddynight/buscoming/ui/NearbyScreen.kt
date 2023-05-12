@@ -19,7 +19,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun nearbyScreen(viewModel: NearbyScreenViewModel = viewModel()) {
-    val state = viewModel.status.observeAsState()
+    val networkState = viewModel.activeNetworkInfoLiveData.observeAsState()
     val locationPermissionsState = rememberMultiplePermissionsState(
         listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -43,22 +43,15 @@ fun nearbyScreen(viewModel: NearbyScreenViewModel = viewModel()) {
                     Icon(Icons.Rounded.Refresh,"refresh")
                 }
             }) {
-            when (state.value) {
-                BusApiStatus.LOADING -> {
-                    putCenter() {
-                        CircularProgressIndicator()
+            if (networkState.value == null) {
+                putCenter {
+                    Column() {
+                        Text("网络不可用")
                     }
                 }
-                BusApiStatus.DONE -> {
-                    stationList()
-                }
-                BusApiStatus.ERROR -> {
-                    putCenter() {
-                        Column() {
-                            Text("加载失败")
-                        }
-                    }
-                }
+            }
+            else {
+                stationList()
             }
         }
     } else {
