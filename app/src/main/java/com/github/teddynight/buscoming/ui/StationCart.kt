@@ -38,7 +38,9 @@ fun topStationCart(station: Station, viewModel: NearbyScreenViewModel = viewMode
         modifier = Modifier
             .background(Color(0x7f7f7f))
             .fillMaxWidth()
-            .clickable { viewModel.refreshStn(station.id) }) {
+//            .clickable { viewModel.refreshStn(station.id) }
+            .clickable { viewModel.getStn(station.id) }
+    ) {
         Box(modifier = Modifier
             .size(24.dp)
             .padding(4.dp)) {
@@ -54,26 +56,22 @@ fun topStationCart(station: Station, viewModel: NearbyScreenViewModel = viewMode
 
 @Composable
 fun stationCart(station: Station, viewModel: NearbyScreenViewModel = viewModel()) {
-    val _buses = viewModel.buses.observeAsState()
     val sid = viewModel.sid.observeAsState()
-    val status = viewModel.stnStatus.observeAsState()
+    val buses = viewModel.buses.observeAsState()
     Column(modifier = Modifier
         .padding(4.dp)
         .fillMaxHeight()) {
         topStationCart(station)
         Column() {
             if (sid.value!! == station.id) {
-                if (!status.value!!) {
+                if (buses.value == null) {
                     putCenter {
                         CircularProgressIndicator()
                     }
                 }
                 else {
-                    val buses = _buses.value
-                    if (buses != null) {
-                        buses.forEach() {
-                            busCart(it)
-                        }
+                    buses.value!!.forEach() {
+                        busCart(it)
                     }
                 }
             }
