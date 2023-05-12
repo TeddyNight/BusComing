@@ -63,7 +63,7 @@ fun stationCart(station: Station, viewModel: NearbyScreenViewModel = viewModel()
         .fillMaxHeight()) {
         topStationCart(station)
         Column() {
-            if (sid.value!! == station.id) {
+            if (sid.value != null && sid.value!! == station.id) {
                 if (buses.value == null) {
                     putCenter {
                         CircularProgressIndicator()

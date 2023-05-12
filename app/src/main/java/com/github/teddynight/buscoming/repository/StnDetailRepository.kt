@@ -4,20 +4,21 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.github.teddynight.buscoming.model.Bus
 import com.github.teddynight.buscoming.network.BusApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
 
 object StnDetailRepository {
-    val sid = MutableLiveData("")
+    val job = Job()
+    val sid = MutableLiveData<String>(null)
     val buses = MutableLiveData<List<List<Bus>>>(null)
     suspend fun get(sid: String) {
         this.sid.value = sid
-        try {
-            this.buses.value = null
-            refresh()
-        } catch (e: Throwable) {
-            Log.e("StnDetailRepository",e.message!!)
-        }
+        this.buses.value = null
+        refresh()
     }
     suspend fun refresh() {
-        buses.value = BusApi.retrofitService.getStnDetail(this.sid.value!!)
+        if (sid.value != null) {
+            buses.value = BusApi.retrofitService.getStnDetail(this.sid.value!!)
+        }
     }
 }

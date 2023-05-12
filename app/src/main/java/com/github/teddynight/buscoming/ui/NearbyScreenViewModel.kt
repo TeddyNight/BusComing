@@ -3,6 +3,7 @@ package com.github.teddynight.buscoming.ui
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.*
 import com.github.teddynight.buscoming.model.Bus
 import com.github.teddynight.buscoming.model.Station
@@ -13,6 +14,7 @@ import com.github.teddynight.buscoming.utlis.Location
 import com.github.teddynight.buscoming.utlis.SensorManagerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +34,7 @@ class NearbyScreenViewModel @Inject constructor(
     val sid = stnRepository.sid
     val buses = stnRepository.buses
     private val sensorHelper = SensorManagerHelper(context)
+    private var job = stnRepository.job
 
     init {
 //        refresh()
@@ -52,8 +55,13 @@ class NearbyScreenViewModel @Inject constructor(
 //        buses.value = BusApi.retrofitService.getStnDetail(_sid.value!!)
 //    }
     fun getStn(sid: String) {
-        viewModelScope.launch {
-            stnRepository.get(sid)
+        job.cancelChildren()
+        viewModelScope.launch(job) {
+            try {
+                stnRepository.get(sid)
+            } catch (e: Throwable) {
+                Toast.makeText(context,"加载失败", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -71,12 +79,14 @@ class NearbyScreenViewModel @Inject constructor(
 //    }
 
     fun refresh() {
-        viewModelScope.launch {
+        job.cancelChildren()
+        viewModelScope.launch(job) {
             try {
                 _status.value = BusApiStatus.LOADING
                 stations.value = BusApi.retrofitService.getNearby(
                     pos.value!!.first,
                     pos.value!!.second)
+                stnRepository.refresh()
                 _status.value = BusApiStatus.DONE
             } catch (e: Throwable) {
                 _status.value = BusApiStatus.ERROR
