@@ -2,6 +2,7 @@ package com.github.teddynight.buscoming.ui
 
 import android.app.Application
 import android.content.Context
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
@@ -14,6 +15,7 @@ import com.github.teddynight.buscoming.utlis.Location
 import com.github.teddynight.buscoming.utlis.SensorManagerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,6 +24,7 @@ import javax.inject.Inject
 class NearbyScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
+    private val handler = Handler()
     val stnRepository = StnDetailRepository
     val pos = MutableLiveData(Pair(0.0,0.0))
     private var _status = MutableLiveData(BusApiStatus.LOADING)
@@ -34,7 +37,7 @@ class NearbyScreenViewModel @Inject constructor(
     val sid = stnRepository.sid
     val buses = stnRepository.buses
     private val sensorHelper = SensorManagerHelper(context)
-    private var job = stnRepository.job
+    private var job = Job()
 
     init {
 //        refresh()
@@ -62,7 +65,21 @@ class NearbyScreenViewModel @Inject constructor(
             } catch (e: Throwable) {
                 Toast.makeText(context,"加载失败", Toast.LENGTH_SHORT).show()
             }
+            handler.postDelayed(Runnable {
+                refreshStn() },15000)
         }
+    }
+
+    fun refreshStn() {
+        viewModelScope.launch(job) {
+            try {
+                stnRepository.refresh()
+            } catch (e: Throwable) {
+                Log.e("NearbyScreenViewModel","Update stnDetail failed")
+            }
+        }
+        handler.postDelayed(Runnable {
+            refreshStn() },15000)
     }
 
 //    fun refreshStn(sid: String) {
