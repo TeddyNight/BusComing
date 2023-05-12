@@ -14,6 +14,7 @@ import com.github.teddynight.buscoming.model.Bus
 import com.github.teddynight.buscoming.model.Station
 import com.github.teddynight.buscoming.network.BusApi
 import com.github.teddynight.buscoming.network.BusApiStatus
+import com.github.teddynight.buscoming.repository.NearbyRepository
 import com.github.teddynight.buscoming.repository.StnDetailRepository
 import com.github.teddynight.buscoming.utlis.Location
 import com.github.teddynight.buscoming.utlis.ReceiverLiveData
@@ -30,9 +31,9 @@ class NearbyScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
     private val handler = Handler()
-    val stnRepository = StnDetailRepository
-    val pos = MutableLiveData(Pair(0.0,0.0))
-    val stations: MutableLiveData<List<Station>?> = MutableLiveData(null)
+    private val nearbyRepository = NearbyRepository
+    private val stnRepository = StnDetailRepository
+    val stations = nearbyRepository.stations
     val sid = stnRepository.sid
     val buses = stnRepository.buses
     private val sensorHelper = SensorManagerHelper(context)
@@ -53,8 +54,7 @@ class NearbyScreenViewModel @Inject constructor(
     }
 
     fun getLocation() {
-        val location = Location(context).getLocation()
-        pos.value = Pair(location.longitude,location.latitude)
+        nearbyRepository.getLocation(context)
     }
 
 //    suspend fun getStn() {
@@ -108,11 +108,7 @@ class NearbyScreenViewModel @Inject constructor(
         job.cancelChildren()
         viewModelScope.launch(job) {
             try {
-                stations.value = null
-                stations.value = BusApi.retrofitService.getNearby(
-                    pos.value!!.first,
-                    pos.value!!.second
-                )
+                nearbyRepository.refresh()
                 stnRepository.refresh()
             } catch (e: Throwable) {
                 errorToast()
@@ -120,7 +116,7 @@ class NearbyScreenViewModel @Inject constructor(
         }
     }
 
-    fun errorToast() {
+    private fun errorToast() {
         Toast.makeText(context,"加载失败", Toast.LENGTH_SHORT).show()
     }
 }
