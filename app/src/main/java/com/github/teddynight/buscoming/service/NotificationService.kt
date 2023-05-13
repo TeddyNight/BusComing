@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.viewModelScope
 import com.github.teddynight.buscoming.MainActivity
 import com.github.teddynight.buscoming.R
+import com.github.teddynight.buscoming.data.model.Bus
 import com.github.teddynight.buscoming.data.repository.StnDetailRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -58,7 +59,38 @@ class NotificationService: Service() {
                 Log.e("NotificationService",e.message!!)
             }
         }
+        busNotify()
         handler.postDelayed(Runnable {
             refresh() },30000)
+    }
+
+    fun busNotify() {
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as
+                NotificationManager
+        fun helper(bus: Bus) {
+            val arrivals = bus.arrivals
+            var waitingTime: Long = -1
+            if (!arrivals.isEmpty()) {
+                val time = arrivals.sorted()[0]
+                val curTime = System.currentTimeMillis()
+                if (time > curTime) waitingTime  = ((time - curTime) / (60 * 1000))
+                if (waitingTime in 0 .. 2) {
+                    val notification = NotificationCompat.Builder(this, "Notification")
+                        .setContentTitle(bus.name)
+                        .setContentText("终点站:${bus.endSn}，还有${waitingTime}分钟到达")
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.ic_launcher_foreground))
+                        .build()
+                    manager.notify(1, notification)
+                }
+            }
+        }
+        val buses = stnRepository.buses
+        if (buses.value != null) {
+            buses.value!!.forEach() {
+                helper(it[0])
+                helper(it[1])
+            }
+        }
     }
 }
