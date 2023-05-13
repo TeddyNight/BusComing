@@ -1,35 +1,22 @@
 package com.github.teddynight.buscoming
 
-import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import com.github.teddynight.buscoming.model.Bus
-import com.github.teddynight.buscoming.model.Station
-import com.github.teddynight.buscoming.network.BusApi
+import com.github.teddynight.buscoming.data.model.Station
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.teddynight.buscoming.ui.NearbyScreenViewModel
+import com.github.teddynight.buscoming.ui.busList
 import com.github.teddynight.buscoming.ui.theme.putCenter
 
 @Composable
@@ -57,23 +44,13 @@ fun topStationCart(station: Station, viewModel: NearbyScreenViewModel = viewMode
 @Composable
 fun stationCart(station: Station, viewModel: NearbyScreenViewModel = viewModel()) {
     val sid = viewModel.sid.observeAsState()
-    val buses = viewModel.buses.observeAsState()
     Column(modifier = Modifier
         .padding(4.dp)
         .fillMaxHeight()) {
         topStationCart(station)
         Column() {
             if (sid.value != null && sid.value!! == station.id) {
-                if (buses.value == null) {
-                    putCenter {
-                        CircularProgressIndicator()
-                    }
-                }
-                else {
-                    buses.value!!.forEach() {
-                        busCart(it)
-                    }
-                }
+                busList()
             }
         }
     }

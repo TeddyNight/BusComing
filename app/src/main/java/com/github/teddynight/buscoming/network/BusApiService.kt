@@ -1,7 +1,7 @@
 package com.github.teddynight.buscoming.network
 
-import com.github.teddynight.buscoming.model.Bus
-import com.github.teddynight.buscoming.model.Station
+import com.github.teddynight.buscoming.data.model.Bus
+import com.github.teddynight.buscoming.data.model.Station
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit

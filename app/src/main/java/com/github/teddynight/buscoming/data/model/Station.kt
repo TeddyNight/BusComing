@@ -1,4 +1,4 @@
-package com.github.teddynight.buscoming.model
+package com.github.teddynight.buscoming.data.model
 
 import com.squareup.moshi.Json
 

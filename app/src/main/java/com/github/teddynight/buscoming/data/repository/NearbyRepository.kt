@@ -1,10 +1,10 @@
-package com.github.teddynight.buscoming.repository
+package com.github.teddynight.buscoming.data.repository
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import com.github.teddynight.buscoming.model.Station
+import com.github.teddynight.buscoming.data.model.Station
 import com.github.teddynight.buscoming.network.BusApi
-import com.github.teddynight.buscoming.utlis.Location
+import com.github.teddynight.buscoming.utils.Location
 
 object NearbyRepository {
     val pos = MutableLiveData(Pair(0.0,0.0))

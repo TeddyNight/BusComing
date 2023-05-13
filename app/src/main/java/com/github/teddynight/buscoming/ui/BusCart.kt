@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
-import com.github.teddynight.buscoming.model.Bus
+import com.github.teddynight.buscoming.data.model.Bus
 import com.github.teddynight.buscoming.ui.theme.BusComingTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.teddynight.buscoming.ui.NearbyScreenViewModel
@@ -52,7 +52,9 @@ fun timeInCart(arrivals: List<Long>){
 }
 
 @Composable
-fun busCart(busPair: List<Bus>) {
+fun busCart(index: Int, viewModel: NearbyScreenViewModel = viewModel()) {
+    val busList = viewModel.buses.observeAsState()
+    val busPair = busList.value!![index]
     var direction = remember { mutableStateOf(true) }
     val bus = if(direction.value) busPair[0] else busPair[1]
     Row(modifier = Modifier

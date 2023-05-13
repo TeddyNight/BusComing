@@ -1,4 +1,4 @@
-package com.github.teddynight.buscoming.utlis
+package com.github.teddynight.buscoming.utils
 
 import android.content.Context
 import android.hardware.Sensor

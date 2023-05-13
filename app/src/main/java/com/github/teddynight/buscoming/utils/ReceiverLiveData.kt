@@ -1,11 +1,9 @@
-package com.github.teddynight.buscoming.utlis
+package com.github.teddynight.buscoming.utils
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import java.util.function.BiFunction
 
