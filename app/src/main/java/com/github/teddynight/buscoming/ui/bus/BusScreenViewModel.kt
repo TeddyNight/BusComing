@@ -1,5 +1,6 @@
 package com.github.teddynight.buscoming.ui.bus
 
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.*
 import com.github.teddynight.buscoming.data.repository.BusRepository
@@ -16,6 +17,7 @@ class BusScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
     private val line1: String = checkNotNull(savedStateHandle["line1"])
     private val direction = BusRepository.direction
     private val job = Job()
+    private val handler = Handler()
     val bus = BusRepository.bus
     val arrivals: LiveData<List<String>?> = bus.map {
         if (it != null) {
@@ -62,6 +64,7 @@ class BusScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
                 Log.e("BusScreen",e.message!!)
             }
         }
+        handler.postDelayed(Runnable { refresh() },15000)
     }
 
 }

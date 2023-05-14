@@ -109,22 +109,29 @@ fun timeCart(time: String) {
 fun stopList(viewModel: BusScreenViewModel = hiltViewModel()) {
     val bus = viewModel.bus.observeAsState()
     val stops = bus.value!!.stops
+    val list = bus.value!!.list
     Column(modifier = Modifier
         .padding(12.dp)
         .fillMaxWidth()) {
-        LazyRow() {
+        LazyRow(modifier = Modifier.fillMaxWidth()) {
             items(stops) {
-                    stop -> stopCart(stop)
+                    stop -> stopCart(stop,stops.indexOf(stop)+1 in list)
             }
         }
     }
 }
 
 @Composable
-fun stopCart(name: String) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .width(32.dp)) {
+fun stopCart(name: String, hasBus: Boolean) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+        .width(with(LocalDensity.current) {
+            32.sp.toDp()
+        })) {
+        Box(modifier = Modifier.width(24.dp).height(24.dp)) {
+            if (hasBus) {
+                Icon(ImageVector.vectorResource(R.drawable.bus), "到站")
+            }
+        }
         Divider(
             color = Color.Gray,
             modifier = Modifier
