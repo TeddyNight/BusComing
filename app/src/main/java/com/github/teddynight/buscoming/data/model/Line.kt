@@ -11,5 +11,6 @@ data class Line(
     val price: String,
     val firstTime: String,
     val lastTime: String,
-    val arrivals: List<Long>
+    val arrivals: List<Long>,
+    val order: Int
 )

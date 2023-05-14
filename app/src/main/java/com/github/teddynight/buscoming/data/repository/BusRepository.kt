@@ -8,12 +8,11 @@ import com.github.teddynight.buscoming.network.BusApi
 object BusRepository {
     val lId = MutableLiveData<String>(null)
     val bus = MutableLiveData<Bus?>(null)
-    val direction = MutableLiveData<Boolean>(true)
+    val order = MutableLiveData<Int>(-1)
 
     suspend fun refresh() {
-        val direction = if (this.direction.value!!) 0 else 1
         if (lId.value != null) {
-            bus.value = BusApi.retrofitService.getBusDetail(lId.value!!,direction)
+            bus.value = BusApi.retrofitService.getBusDetail(lId.value!!,order.value!!)
         }
     }
 }

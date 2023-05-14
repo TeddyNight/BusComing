@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -115,19 +119,28 @@ fun stopList(viewModel: BusScreenViewModel = hiltViewModel()) {
         .fillMaxWidth()) {
         LazyRow(modifier = Modifier.fillMaxWidth()) {
             items(stops) {
-                    stop -> stopCart(stop,stops.indexOf(stop)+1 in list)
+                    stop ->
+                val order = stops.indexOf(stop)+1
+                stopCart(stop,
+                order in list,
+                order == bus.value!!.line.order,
+                    { viewModel.changeOrder(order) })
             }
         }
     }
 }
 
 @Composable
-fun stopCart(name: String, hasBus: Boolean) {
+fun stopCart(name: String, hasBus: Boolean, isTarget: Boolean, onClick: (Int) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
         .width(with(LocalDensity.current) {
             32.sp.toDp()
         })) {
-        Box(modifier = Modifier.width(24.dp).height(24.dp)) {
+        Box(
+            modifier = Modifier
+                .width(24.dp)
+                .height(24.dp)
+        ) {
             if (hasBus) {
                 Icon(ImageVector.vectorResource(R.drawable.bus), "到站")
             }
@@ -140,14 +153,20 @@ fun stopCart(name: String, hasBus: Boolean) {
                 })
                 .height(8.dp)
         )
-        Text(name,
-            fontSize = 16.sp,
+
+        ClickableText(text= AnnotatedString(name),
+            style = TextStyle(fontSize = 16.sp,
+                color = if (isTarget) MaterialTheme.colors.primary else Color.Black,
+                fontWeight = if (isTarget) FontWeight.Bold else FontWeight.Normal
+            ),
             modifier = Modifier
-                .padding(4.dp)
-                .width(with(LocalDensity.current) {
-                    16.sp.toDp()
-                }))
-    }
+                    .padding(4.dp)
+                    .width(with(LocalDensity.current) {
+                        16.sp.toDp()
+                    }),
+            onClick = onClick
+            )
+        }
 }
 
 @Composable

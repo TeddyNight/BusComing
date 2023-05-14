@@ -15,7 +15,7 @@ class BusScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
     ViewModel() {
     private val line0: String = checkNotNull(savedStateHandle["line0"])
     private val line1: String = checkNotNull(savedStateHandle["line1"])
-    private val direction = BusRepository.direction
+    private val direction = MutableLiveData<Boolean>(checkNotNull(savedStateHandle["direction"]))
     private val job = Job()
     private val handler = Handler()
     val bus = BusRepository.bus
@@ -38,24 +38,33 @@ class BusScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
     }
 
     init {
-        BusRepository.lId.value = line0
+        BusRepository.order.value = checkNotNull(savedStateHandle["order"])
+        setLid()
         refresh()
     }
 
-    fun changeDirection() {
-        direction.value = !direction.value!!
+    fun setLid() {
         if (direction.value!!) {
             BusRepository.lId.value = line0
         }
         else {
             BusRepository.lId.value = line1
         }
+    }
+
+    fun changeOrder(order: Int) {
+        BusRepository.order.value = order
+        refresh()
+    }
+
+    fun changeDirection() {
+        direction.value = !direction.value!!
+        setLid()
         BusRepository.bus.value = null
         refresh()
     }
 
     fun refresh() {
-        Log.d("BusScreen",BusRepository.lId.value!!)
         job.cancelChildren()
         viewModelScope.launch(job) {
             try {

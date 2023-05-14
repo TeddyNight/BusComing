@@ -7,9 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.github.teddynight.buscoming.service.NotificationService
 import com.github.teddynight.buscoming.ui.bus.busScreen
 import com.github.teddynight.buscoming.ui.nearby.nearbyScreen
@@ -30,7 +32,11 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 NavHost(navController = navController, startDestination = "nearby") {
                     composable("nearby") { nearbyScreen(navController = navController) }
-                    composable("bus/{line0}/{line1}") { busScreen(navController = navController) }
+                    composable("bus/{line0}/{line1}/{direction}/{order}",
+                        arguments = listOf(navArgument("line0") { type = NavType.StringType },
+                            navArgument("line1") { type = NavType.StringType },
+                            navArgument("direction") { type = NavType.BoolType },
+                            navArgument("order") { type = NavType.IntType })) { busScreen(navController = navController) }
                 }
             }
         }

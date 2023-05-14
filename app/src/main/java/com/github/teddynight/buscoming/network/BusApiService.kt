@@ -26,7 +26,7 @@ interface BusApiService {
     @GET("busapi/stndetail.php")
     suspend fun getStnDetail(@Query("sid") sId: String): List<List<Line>>
     @GET("busapi/busdetail.php")
-    suspend fun getBusDetail(@Query("lid") lId: String,@Query("direction") direction: Int): Bus
+    suspend fun getBusDetail(@Query("lid") lId: String,@Query("order") order: Int): Bus
 }
 
 object BusApi {

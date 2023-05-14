@@ -37,7 +37,7 @@ fun lineCart(index: Int, viewModel: NearbyScreenViewModel = viewModel(),
         .fillMaxWidth()
         .height(IntrinsicSize.Min)
         .clickable {
-            navController.navigate("bus/"+linePair[0].id+"/"+linePair[1].id)
+            navController.navigate("bus/${linePair[0].id}/${linePair[1].id}/${direction.value}/${line.order}")
         }) {
         Column() {
             bigCartText(line.name)
