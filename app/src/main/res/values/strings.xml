@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BusComing</string>
+    <string name="title_activity_bus">BusActivity</string>
 </resources>

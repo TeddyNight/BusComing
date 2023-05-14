@@ -1,20 +1,19 @@
-package com.github.teddynight.buscoming.ui
+package com.github.teddynight.buscoming.ui.nearby
 
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
+import com.github.teddynight.buscoming.data.model.Line
 import com.github.teddynight.buscoming.data.repository.NearbyRepository
-import com.github.teddynight.buscoming.data.repository.StnDetailRepository
+import com.github.teddynight.buscoming.data.repository.StationRepository
 import com.github.teddynight.buscoming.utils.ReceiverLiveData
 import com.github.teddynight.buscoming.utils.SensorManagerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,13 +23,11 @@ class NearbyScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 //    private val handler = Handler()
-    private val nearbyRepository = NearbyRepository
-    private val stnRepository = StnDetailRepository
-    val stations = nearbyRepository.stations
-    val sid = stnRepository.sid
-    val buses = stnRepository.buses
+    val stations = NearbyRepository.stations
+    val sid = StationRepository.sid
+    val lines = StationRepository.lines
     private val sensorHelper = SensorManagerHelper(context)
-    private var job = stnRepository.job
+    private var job = StationRepository.job
     val activeNetworkInfoLiveData = ReceiverLiveData(context, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)) { context, intent ->
         val manager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         manager.activeNetwork
@@ -47,7 +44,7 @@ class NearbyScreenViewModel @Inject constructor(
     }
 
     fun getLocation() {
-        nearbyRepository.getLocation(context)
+        NearbyRepository.getLocation(context)
     }
 
     fun getStn(sid: String) {
@@ -57,48 +54,23 @@ class NearbyScreenViewModel @Inject constructor(
             job.cancelChildren()
             viewModelScope.launch(job) {
                 try {
-                    stnRepository.get(sid)
+                    StationRepository.get(sid)
                 } catch (e: Throwable) {
+                    Log.e("NearbyScreen",e.message!!)
                     errorToast()
                 }
             }
         }
     }
 
-//    fun refreshStn() {
-//        if (activeNetworkInfoLiveData.value != null) {
-//            viewModelScope.launch(job) {
-//                try {
-//                    stnRepository.refresh()
-//                } catch (e: Throwable) {
-//                    errorToast()
-//                }
-//            }
-//        }
-//        handler.postDelayed(Runnable {
-//            refreshStn() },15000)
-//    }
-
-//    fun refreshStn(sid: String) {
-//        viewModelScope.launch {
-//            try {
-//                _stnStatus.value = false
-//                _sid.value = sid
-//                getStn()
-//                _stnStatus.value = true
-//            } catch (e: Throwable) {
-//                Log.e("StationCart",e.message!!)
-//            }
-//        }
-//    }
-
     fun refresh() {
         job.cancelChildren()
         viewModelScope.launch(job) {
             try {
-                nearbyRepository.refresh()
-                stnRepository.refresh()
+                NearbyRepository.refresh()
+                StationRepository.refresh()
             } catch (e: Throwable) {
+                Log.e("NearbyScreen",e.message!!)
                 errorToast()
             }
         }
@@ -106,5 +78,17 @@ class NearbyScreenViewModel @Inject constructor(
 
     private fun errorToast() {
         Toast.makeText(context,"加载失败", Toast.LENGTH_SHORT).show()
+    }
+
+    fun getWaitingTime(index: Int, direction: Boolean): String {
+        val linePair = lines.value!![index]
+        val line = if (direction) linePair[0] else linePair[1]
+        var waitingTime = "--"
+        if (line.arrivals.isNotEmpty()) {
+            val time = line.arrivals.sorted()[0]
+            val curTime = System.currentTimeMillis()
+            if (time > curTime) waitingTime  = ((time - curTime) / (60 * 1000)).toString()
+        }
+        return waitingTime
     }
 }

@@ -1,4 +1,4 @@
-package com.github.teddynight.buscoming
+package com.github.teddynight.buscoming.ui.nearby
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

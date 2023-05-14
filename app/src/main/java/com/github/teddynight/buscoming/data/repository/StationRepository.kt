@@ -1,22 +1,22 @@
 package com.github.teddynight.buscoming.data.repository
 
 import androidx.lifecycle.*
-import com.github.teddynight.buscoming.data.model.Bus
+import com.github.teddynight.buscoming.data.model.Line
 import com.github.teddynight.buscoming.network.BusApi
 import kotlinx.coroutines.Job
 
-object StnDetailRepository {
+object StationRepository {
     val sid = MutableLiveData<String>(null)
-    val buses = MutableLiveData<List<List<Bus>>?>(null)
+    val lines = MutableLiveData<List<List<Line>>?>(null)
     val job = Job()
     suspend fun get(sid: String) {
-        StnDetailRepository.sid.value = sid
-        buses.postValue(null)
+        StationRepository.sid.value = sid
+        lines.postValue(null)
         refresh()
     }
     suspend fun refresh() {
         if (sid.value != null) {
-            buses.postValue(BusApi.retrofitService.getStnDetail(sid.value!!))
+            lines.postValue(BusApi.retrofitService.getStnDetail(sid.value!!))
         }
     }
 }

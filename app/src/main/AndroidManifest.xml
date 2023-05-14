@@ -19,10 +19,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BusComing"
         tools:targetApi="31">
+        <activity
+            android:name=".BusActivity"
+            android:exported="false"
+            android:label="@string/title_activity_bus"
+            android:theme="@style/Theme.BusComing">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
         <service
             android:name=".service.NotificationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"

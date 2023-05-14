@@ -1,4 +1,4 @@
-package com.github.teddynight.buscoming.ui
+package com.github.teddynight.buscoming.ui.nearby
 
 import android.Manifest
 import androidx.compose.foundation.layout.Column
@@ -8,15 +8,19 @@ import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
-import com.github.teddynight.buscoming.stationList
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.teddynight.buscoming.ui.theme.putCenter
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun nearbyScreen(viewModel: NearbyScreenViewModel = viewModel()) {
+fun nearbyScreen(viewModel: NearbyScreenViewModel = hiltViewModel(),
+                 navController: NavHostController) {
     val networkState = viewModel.activeNetworkInfoLiveData.observeAsState()
     val locationPermissionsState = rememberMultiplePermissionsState(
         listOf(
@@ -33,7 +37,7 @@ fun nearbyScreen(viewModel: NearbyScreenViewModel = viewModel()) {
         }
         Scaffold(topBar = {
             TopAppBar(
-                title = { Text("附近的车") },
+                title = { Text("附近车站") },
             )
         },
             floatingActionButton = {
@@ -49,7 +53,7 @@ fun nearbyScreen(viewModel: NearbyScreenViewModel = viewModel()) {
                 }
             }
             else {
-                stationList()
+                stationList(navController = navController)
             }
         }
     } else {

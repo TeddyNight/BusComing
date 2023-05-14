@@ -12,17 +12,16 @@ import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.viewModelScope
 import com.github.teddynight.buscoming.MainActivity
 import com.github.teddynight.buscoming.R
-import com.github.teddynight.buscoming.data.model.Bus
-import com.github.teddynight.buscoming.data.repository.StnDetailRepository
+import com.github.teddynight.buscoming.data.model.Line
+import com.github.teddynight.buscoming.data.repository.StationRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class NotificationService: Service() {
     private val handler = Handler()
-    private val stnRepository = StnDetailRepository
+    private val stnRepository = StationRepository
 
     override fun onBind(intent: Intent?): IBinder? {
         TODO("Not yet implemented")
@@ -67,8 +66,8 @@ class NotificationService: Service() {
     fun busNotify() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as
                 NotificationManager
-        fun helper(bus: Bus) {
-            val arrivals = bus.arrivals
+        fun helper(line: Line) {
+            val arrivals = line.arrivals
             var waitingTime: Long = -1
             if (!arrivals.isEmpty()) {
                 val time = arrivals.sorted()[0]
@@ -76,8 +75,8 @@ class NotificationService: Service() {
                 if (time > curTime) waitingTime  = ((time - curTime) / (60 * 1000))
                 if (waitingTime in 0 .. 2) {
                     val notification = NotificationCompat.Builder(this, "Notification")
-                        .setContentTitle(bus.name)
-                        .setContentText("终点站:${bus.endSn}，还有${waitingTime}分钟到达")
+                        .setContentTitle(line.name)
+                        .setContentText("终点站:${line.endSn}，还有${waitingTime}分钟到达")
                         .setSmallIcon(R.drawable.ic_launcher_foreground)
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.ic_launcher_foreground))
                         .build()
@@ -85,9 +84,9 @@ class NotificationService: Service() {
                 }
             }
         }
-        val buses = stnRepository.buses
-        if (buses.value != null) {
-            buses.value!!.forEach() {
+        val lines = stnRepository.lines
+        if (lines.value != null) {
+            lines.value!!.forEach() {
                 helper(it[0])
                 helper(it[1])
             }
