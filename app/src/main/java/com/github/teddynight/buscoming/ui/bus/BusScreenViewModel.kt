@@ -60,7 +60,6 @@ class BusScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
     fun changeDirection() {
         direction.value = !direction.value!!
         setLid()
-        BusRepository.bus.value = null
         refresh()
     }
 

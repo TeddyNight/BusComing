@@ -3,6 +3,7 @@ package com.github.teddynight.buscoming.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -37,7 +38,7 @@ class NotificationService: Service() {
             manager.createNotificationChannel(channel)
         }
         val intent = Intent(this, MainActivity::class.java)
-        val pi = PendingIntent.getActivity(this, 0, intent, 0)
+        val pi = PendingIntent.getActivity(this, 0, intent, FLAG_IMMUTABLE)
         val notification = NotificationCompat.Builder(this, "Notification")
             .setContentTitle("BusComing")
             .setContentText("BusComing通知服务正在运行")

@@ -122,8 +122,8 @@ fun stopList(viewModel: BusScreenViewModel = hiltViewModel()) {
                     stop ->
                 val order = stops.indexOf(stop)+1
                 stopCart(stop,
-                order in list,
-                order == bus.value!!.line.order,
+                    order in list,
+                    order == bus.value!!.line.order,
                     { viewModel.changeOrder(order) })
             }
         }
