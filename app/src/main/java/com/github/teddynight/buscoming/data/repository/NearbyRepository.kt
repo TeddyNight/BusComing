@@ -1,6 +1,7 @@
 package com.github.teddynight.buscoming.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.github.teddynight.buscoming.data.model.Station
 import com.github.teddynight.buscoming.network.BusApi
@@ -11,8 +12,7 @@ object NearbyRepository {
     val stations: MutableLiveData<List<Station>?> = MutableLiveData(null)
 
     fun getLocation(context: Context) {
-        val location = Location(context).getLocation()
-        pos.value = Pair(location.longitude,location.latitude)
+        pos.value = Location.wgs84togcj02(Location(context).getLocation())
     }
 
     suspend fun refresh() {

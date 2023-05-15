@@ -24,7 +24,7 @@ class BusScreenViewModel @Inject constructor(savedStateHandle: SavedStateHandle)
             it!!.line.arrivals.sorted().map {
                 val time = it
                 val curTime = System.currentTimeMillis()
-                if (time > curTime) {
+                if (time >= curTime) {
                     ((time - curTime) / (1000*60)).toString()
                 }
                 else {

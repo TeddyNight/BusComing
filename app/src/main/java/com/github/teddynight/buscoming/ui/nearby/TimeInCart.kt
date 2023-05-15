@@ -2,6 +2,7 @@ package com.github.teddynight.buscoming.ui.nearby
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,13 +16,25 @@ import androidx.compose.ui.unit.sp
 fun timeInCart(waitingTime: String){
     Row(verticalAlignment = Alignment.Bottom,
         modifier = Modifier.padding(4.dp)) {
-        Text(
-            text = waitingTime,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(text = "分",
-            fontSize = 16.sp,
-            color = Color.Gray);
+        if (waitingTime != "0") {
+            Text(
+                text = waitingTime,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "分",
+                fontSize = 16.sp,
+                color = Color.Gray
+            );
+        }
+        else {
+            Text(
+                text = "已到站",
+                fontSize =  22.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.primary
+            )
+        }
     }
 }

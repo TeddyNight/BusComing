@@ -87,7 +87,7 @@ class NearbyScreenViewModel @Inject constructor(
         if (line.arrivals.isNotEmpty()) {
             val time = line.arrivals.sorted()[0]
             val curTime = System.currentTimeMillis()
-            if (time > curTime) waitingTime  = ((time - curTime) / (60 * 1000)).toString()
+            if (time >= curTime) waitingTime  = ((time - curTime) / (60 * 1000)).toString()
         }
         return waitingTime
     }

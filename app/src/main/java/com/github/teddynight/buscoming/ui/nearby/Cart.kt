@@ -25,7 +25,7 @@ import com.github.teddynight.buscoming.ui.theme.BusComingTheme
 @Composable
 fun smallCartText(content: String) {
     Text(text = content,
-        fontSize = 16.sp,
+        fontSize = 14.sp,
         color = Color.Gray,
         modifier = Modifier.padding(4.dp));
 }
@@ -33,13 +33,13 @@ fun smallCartText(content: String) {
 @Composable
 fun mediumCartText(content: String) {
     Text(text = content,
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         modifier = Modifier.padding(4.dp));
 }
 
 @Composable
 fun bigCartText(content: String) {
     Text(text = content,
-        fontSize = 22.sp,
+        fontSize = 18.sp,
         modifier = Modifier.padding(4.dp));
 }

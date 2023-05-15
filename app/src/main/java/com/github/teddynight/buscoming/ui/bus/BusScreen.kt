@@ -48,7 +48,7 @@ fun detailCard(viewModel: BusScreenViewModel = hiltViewModel()) {
         Column(modifier = Modifier
             .padding(12.dp)
             .fillMaxWidth()) {
-            Row(
+            Column(
                 modifier = Modifier
                     .padding(4.dp)
                     .fillMaxWidth()
@@ -57,14 +57,16 @@ fun detailCard(viewModel: BusScreenViewModel = hiltViewModel()) {
                     text = line.name,
                     fontSize = 22.sp
                 )
-                Row(horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth()) {
-                    Text(line.startSn, fontSize = 16.sp)
-                    Icon(Icons.Filled.ArrowForward,"到")
-                    Text(line.endSn, fontSize = 16.sp)
-                }
+                Text("始发站: ${line.startSn}", fontSize = 16.sp)
+                Text("终点站: ${line.endSn}", fontSize = 16.sp)
+//                Row(horizontalArrangement = Arrangement.End,
+//                    modifier = Modifier
+//                        .padding(4.dp)
+//                        .fillMaxWidth()) {
+//                    Text(line.startSn, fontSize = 16.sp)
+//                    Icon(Icons.Filled.ArrowForward,"到")
+//                    Text(line.endSn, fontSize = 16.sp)
+//                }
             }
             Row(
                 modifier = Modifier
@@ -72,7 +74,7 @@ fun detailCard(viewModel: BusScreenViewModel = hiltViewModel()) {
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = "首：${line.firstTime}，末：${line.lastTime} 票价${line.price}",
+                    text = "首:${line.firstTime}, 末:${line.lastTime} 票价${line.price}",
                     fontSize = 16.sp
                 )
             }
@@ -88,11 +90,14 @@ fun timeCard(viewModel: BusScreenViewModel = hiltViewModel()) {
         .fillMaxWidth()) {
         Row(horizontalArrangement = Arrangement.SpaceAround,
             modifier = Modifier
-                .padding(4.dp)
                 .fillMaxWidth()) {
             if (arrivals.value != null) {
-                arrivals.value!!.forEach {
-                    timeCart(it)
+                LazyRow(horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier.fillMaxWidth()) {
+                    items(arrivals.value!!) {
+                        time ->
+                        timeCart(time)
+                    }
                 }
             }
         }
@@ -160,10 +165,10 @@ fun stopCart(name: String, hasBus: Boolean, isTarget: Boolean, onClick: (Int) ->
                 fontWeight = if (isTarget) FontWeight.Bold else FontWeight.Normal
             ),
             modifier = Modifier
-                    .padding(4.dp)
-                    .width(with(LocalDensity.current) {
-                        16.sp.toDp()
-                    }),
+                .padding(4.dp)
+                .width(with(LocalDensity.current) {
+                    16.sp.toDp()
+                }),
             onClick = onClick
             )
         }
